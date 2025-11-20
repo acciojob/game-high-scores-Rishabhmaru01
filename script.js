@@ -5,20 +5,20 @@ const scores = document.getElementById("scores");
 // Save score to Local Storage
 function saveScore() {
   const name = nameInput.value.trim();
-  const score = scoreInput.value.trim();
+  const score = Number(scoreInput.value.trim());
 
   if (!name || !score) {
     alert("Please enter both name and score");
     return;
   }
 
-  // Get existing scores from localStorage
+  // Get existing scores
   let scoreList = JSON.parse(localStorage.getItem("scores")) || [];
 
   // Add new score
   scoreList.push({ name, score });
 
-  // Save updated list
+  // Save back to localStorage
   localStorage.setItem("scores", JSON.stringify(scoreList));
 
   // Clear input fields
@@ -30,14 +30,16 @@ function saveScore() {
 
 // Show scores in div
 function showScores() {
-  // Get scores
   let scoreList = JSON.parse(localStorage.getItem("scores")) || [];
 
-  // If empty → show text
+  // If no scores
   if (scoreList.length === 0) {
-    scores.innerHTML = "<p>No scores yet</p>";
+    scores.innerHTML = "No scores yet";
     return;
   }
+
+  // Sort in descending order (highest score first)
+  scoreList.sort((a, b) => b.score - a.score);
 
   // Build table
   let table = `
@@ -48,7 +50,7 @@ function showScores() {
       </tr>
   `;
 
-  scoreList.forEach((item) => {
+  scoreList.forEach(item => {
     table += `
       <tr>
         <td>${item.name}</td>
@@ -62,5 +64,5 @@ function showScores() {
   scores.innerHTML = table;
 }
 
-// Load scores on page refresh
+// Load scores on page load
 window.onload = showScores;
